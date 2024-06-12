@@ -138,8 +138,10 @@
                       vue-butt
                       btn-primary btn-lg
                     "
+                    :disabled="loading"
                   >
-                    <span>Register</span>
+                    <span v-if="!loading">Register 🔓</span>
+                    <span v-else><i class="fa fa-spinner fa-spin"></i> Signing in...</span>
                   </button>
                   <span> </span>
                   <span :v-if="errorms" class="w-100 text-danger">{{
@@ -183,6 +185,7 @@ export default {
       transLimit: 0.0,
       errorms: "",
       successms: "",
+      loading: false,  // Add loading state
     };
   },
   computed: {
@@ -205,6 +208,7 @@ export default {
       }
     },
     registerUser() {
+      this.loading = true;  // Set loading to true
       let config = {
         headers: {
           Accept: "application/json",
@@ -230,10 +234,12 @@ export default {
       axios
         .post("users", data, config)
         .then((response) => {
+          this.loading = false;  // Set loading to false
           this.$router.replace("/login");
           console.log(response);
         })
         .catch((error) => {
+          this.loading = false;  // Set loading to false
           console.log(error);
         });
     },
