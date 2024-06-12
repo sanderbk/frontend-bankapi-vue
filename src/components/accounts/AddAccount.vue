@@ -193,7 +193,7 @@ export default {
         { text: "current", value: "current" },
         { text: "savings", value: "savings" },
       ],
-      username: "",
+      username: this.$route.query.username || "",  // Initialize username from route query
       placeHolder: "",
       fetchedUser: "",
       balance: "",
@@ -203,7 +203,11 @@ export default {
       disable: true,
     };
   },
-
+  mounted() {
+    if (this.username) {
+      this.searchUser();
+    }
+  },
   //don't allow anything but numbers in the input method
   methods: {
     pin_focus: function (ref) {
@@ -259,14 +263,15 @@ export default {
           this.placeHolder = res.data.firstname + " " + res.data.lastname;
           this.ownerId = res.data.id;
           this.fetchedUser = JSON.stringify(res.data);
-
+          this.errMsg = "";
           console.log(this.fetchedUser);
           this.disable = false;
         })
-        .catch(function (error) {
-          // this.errMsg = "User not found";
-          console.log(error);
-        });
+      .catch((error) => {  // Use arrow function here
+        this.errMsg = "User not found";
+        console.log("gaat niet goed");
+        console.log(error);
+      });
     },
     //adduser method
 

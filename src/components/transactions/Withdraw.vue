@@ -19,10 +19,11 @@
         >
           <option :value="null" disabled>Select Account</option>
           <option
-              v-for="account in accounts"
-              v-bind:key="{ value: account.iban }"
+          v-for="account in accounts"
+        :key="account.iban"
+        :value="account.iban"
           >
-            {{ account.iban }}
+          Iban: {{ account.iban }} Owner: {{account.username}} AccountType: {{account.accountType}}
           </option>
         </select>
       </div>
@@ -131,6 +132,7 @@ export default {
       userID: "",
       balance: "",
       balInput: "",
+      errMsg: "",
       errorMsg: "",
       myIban: "",
       token: "",

@@ -23,7 +23,7 @@
             <th>ActiveStatus</th>
             <th>Balance</th>
             <th>AbsLimit</th>
-            <th>OwnerID</th>
+            <th>Owner</th>
           </tr>
         </thead>
         <tbody>
@@ -47,7 +47,7 @@
             <td>€{{ account.balance }}</td>
             <td>€{{ account.absLimit }}</td>
             <td>
-              {{ account.ownerId }}
+              {{ account.username }}
             </td>
           </tr>
         </tbody>

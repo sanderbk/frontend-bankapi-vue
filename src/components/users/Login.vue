@@ -42,17 +42,11 @@
                 </div>
                 <div class="text-center mt-4 form-group">
                   <button
-                    style=""
-                    class="
-                      btn
-                      w-100
-                      text-center
-                      submit
-                      vue-butt
-                      btn-success btn-lg
-                    "
+                    class="btn w-100 text-center submit vue-butt btn-success btn-lg"
+                    :disabled="loading"
                   >
-                    <span>Sign in 🔓</span>
+                    <span v-if="!loading">Sign in 🔓</span>
+                    <span v-else><i class="fa fa-spinner fa-spin"></i> Signing in...</span>
                   </button>
 
                   <span :v-if="errorms" class="w-100 text-danger">{{
@@ -91,27 +85,30 @@ export default {
       username: "",
       password: "",
       errorms: "",
+      loading: false,  // Add loading state
     };
   },
   computed: {
     ...mapGetters(["isLoggedIn"]),
     ...mapGetters(["isAdmin"]),
   },
-
   methods: {
     register() {
       this.$router.replace("/register");
     },
     login() {
+      this.loading = true;  // Set loading to true
       this.$store
         .dispatch("login", {
           username: this.username,
           password: this.password,
         })
         .then(() => {
+          this.loading = false;  // Set loading to false
           this.$router.replace("/home");
         })
         .catch((error) => {
+          this.loading = false;  // Set loading to false
           this.errorms = error.response.data.reason;
         });
     },
@@ -123,6 +120,11 @@ export default {
 .vue-butt {
   display: inline-block;
 }
+
+.fa-spinner {
+  margin-left: 10px;
+}
+
 .ftco-section {
   height: 94vh;
   background: radial-gradient(

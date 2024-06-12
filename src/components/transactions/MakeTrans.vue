@@ -18,29 +18,49 @@
         >
           <option :value="null" disabled>Select Account</option>
           <option
-            v-for="account in accounts"
-            v-bind:key="{ value: account.iban }"
+          v-for="account in accounts"
+        :key="account.iban"
+        :value="account.iban"
           >
-            {{ account.iban }}
+            Iban: {{ account.iban }} Owner: {{account.username}} AccountType: {{account.accountType}}
           </option>
         </select>
       </div>
       <div v-if="balance" class="input-group mb-3">
-        <span class="input-group-text">Iban to make a deposit to</span>
-        <input
-          :disabled="disable"
-          type="text"
-          v-model="ibanSearch"
-          class="form-control"
-        />
-        <button
-          type="button"
-          :disabled="disable"
-          @click="searchAccount()"
-          class="btn btn-success"
+            <span class="input-group-text">Search for user</span>
+            <input
+              :disabled="disable"
+              type="text"
+              v-model="username"
+              class="form-control"
+            />
+            <button
+              type="button"
+              :disabled="disable"
+              @click="searchUser()"
+              class="btn btn-success"
+            >
+              Search User
+            </button>
+          </div>
+
+      <div v-if="balance" class="input-group mb-3">
+        <span class="input-group-text w-100 text-center">Iban to make a deposit to</span>
+        <select
+            @change="onChange2($event)"
+            class="w-100 text-center mx-0"
+            :disabled="!disable"
+            v-model="selected"
         >
-          Search Iban
-        </button>
+          <option :value="null" disabled>Select Account</option>
+          <option
+          v-for="account in accountsFetched"
+        :key="account.iban"
+        :value="account.iban"
+          >
+          Iban: {{ account.iban }} Owner: {{account.username}} AccountType: {{account.accountType}}
+          </option>
+        </select>
       </div>
       <form v-on:submit.prevent="login" ref="depoform">
         <div v-if="balance" class="form-hider">
@@ -51,6 +71,7 @@
               selected
               type="text"
               required="required"
+              :disabled="!disable"
               v-model="balInput"
               class="text-center form-control"
             />
@@ -87,6 +108,7 @@ export default {
       selected: "current",
       disable: false,
       accounts: [],
+      accountsFetched: [],
       userID: "",
       balance: "",
       balInput: "",
@@ -96,6 +118,8 @@ export default {
       token: "",
       ibanSearch: "",
       fetchedAccount: [],
+      fetchedUserame: "",
+      ibanToTransfer: "",
     };
   },
   mounted() {
@@ -121,7 +145,49 @@ export default {
       })
       .finally(() => (this.loading = false));
   },
-  methods: {
+  methods: {    
+    searchUser() {
+      console.log(this.username);
+      axios
+        .get("users/getByUsername/" + this.username)
+        .then((res) => {
+          this.placeHolder = res.data.firstname + " " + res.data.lastname;
+          this.ownerId = res.data.id;
+          this.fetchedUser = JSON.stringify(res.data);
+          this.errMsg = "";
+          this.findIbanByUsername(res.data.username);
+          this.disable = true;
+        })
+      .catch((error) => {  // Use arrow function here
+        this.errMsg = "User not found";
+        console.log("gaat niet goed");
+        console.log(error);
+      });
+    },
+    findIbanByUsername(username) {
+  if (!username) {
+    console.error("Username is undefined or null");
+    return;
+  }
+  axios
+    .request({
+      url: `accounts/getByUsername/${username}`,
+      method: "get",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json; charset=UTF-8",
+        Authorization: `Bearer ${this.token}`,
+      },
+    })
+    .then((response) => {
+      console.log(response.data);
+      this.accountsFetched = response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching IBAN by username:", error);
+      this.errorMsg = "Failed to fetch accounts by username.";
+    });
+},
     searchAccount() {
       axios
         .get("accounts/getByIban/" + this.ibanSearch)
@@ -233,6 +299,29 @@ export default {
           this.balance = response.data.balance;
           this.myIban = response.data.iban;
           this.$refs.depoform.reset();
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => (this.loading = false));
+    },
+    onChange2(event) {
+      axios
+        .request({
+          url: "accounts/getByIban/" + event.target.value,
+          method: "get",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json; charset=UTF-8",
+            Authorization: `Bearer ${this.token}`,
+          },
+        })
+        .then((response) => {
+          this.errorMsg = "";
+          this.toIban = response.data.iban;
+
+          console.log("will be making transfer to : " + this.toIban);
+          // this.$refs.depoform.reset();
         })
         .catch((error) => {
           console.log(error);

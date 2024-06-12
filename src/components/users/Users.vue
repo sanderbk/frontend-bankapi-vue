@@ -44,9 +44,12 @@
             <td>{{ user.email }}</td>
             <td>{{ user.phone }}</td>
             <td>
-              <router-link to="/addaccount" class="btn btn-primary"
-                >Add account</router-link
-              >
+              <button
+              @click="this.$router.push({ path: '/addaccount', query: { username: user.username } })"
+          class="py-2 mx-2 btn btn-primary"
+        >
+          Add new Account
+        </button>
             </td>
           </tr>
         </tbody>
