@@ -145,7 +145,7 @@ export default {
       })
       .finally(() => (this.loading = false));
   },
-  methods: {    
+  methods: {
     searchUser() {
       console.log(this.username);
       axios
@@ -158,7 +158,7 @@ export default {
           this.findIbanByUsername(res.data.username);
           this.disable = true;
         })
-      .catch((error) => {  // Use arrow function here
+      .catch((error) => {
         this.errMsg = "User not found";
         console.log("gaat niet goed");
         console.log(error);

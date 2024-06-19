@@ -2,7 +2,7 @@
   <section class="table-transactions mx-4 p-4">
     <div class="container">
       <div class="button-container p-2 my-2">
-        <button @click="this.$router.push('/home')" class="py-2 mx-2 btn btn-danger">
+        <button @click="goBack" class="py-2 mx-2 btn btn-danger">
           Go Back
         </button>
       </div>
@@ -13,18 +13,18 @@
           <th @click="sortBy('to')">To</th>
           <th @click="sortBy('amount')">Amount</th>
           <th @click="sortBy('timestamp')">Date</th>
+          <th @click="sortBy('userPerforming')">Initiator</th>
           <th @click="sortBy('transactionType')">Type</th>
-          <th @click="sortBy('accountType')">Account Type</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="transaction in sortedTransactions" :key="transaction.id">
+        <tr v-for="transaction in transactions" :key="transaction.id">
           <td>{{ extractIBAN(transaction.from) }}</td>
           <td>{{ transaction.to }}</td>
           <td>€{{ transaction.amount }}</td>
           <td>{{ formatDate(transaction.timestamp) }}</td>
+          <td>{{transaction.userPerforming}}</td>
           <td>{{ transaction.transactionType }}</td>
-          <td>{{ transaction.accountType}}</td>
         </tr>
         </tbody>
       </table>
@@ -37,17 +37,14 @@ import axios from "../../axios-auth";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "UserTransactions",
+  name: "AllTransactions",
   computed: {
     ...mapGetters(["getUserName"]),
-    sortedTransactions() {
-      return [...this.transactions];
-    },
   },
   data() {
     return {
       transactions: [],
-      sortKey: '',
+      sortKey: "",
       sortOrder: 1,
     };
   },
@@ -68,30 +65,31 @@ export default {
         this.sortKey = key;
         this.sortOrder = 1;
       }
-      this.transactions.sort((a, b) => {
-        const x = a[key];
-        const y = b[key];
-        return this.sortOrder * ((x < y) ? -1 : ((x > y) ? 1 : 0));
-      });
+      this.fetchTransactions();
+    },
+    fetchTransactions() {
+      let token = localStorage.getItem("token");
+      axios
+          .get(`transactions/employee`, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            this.transactions = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    },
+    goBack() {
+      this.$router.push("/home");
     },
   },
   mounted() {
-    let token = localStorage.getItem("token");
-    axios
-        .get(`transactions/user`, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          this.transactions = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.errored = true;
-        });
+    this.fetchTransactions();
   },
 };
 </script>

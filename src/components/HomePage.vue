@@ -26,6 +26,16 @@
               </div>
             </div>
           </div>
+          <!-- All Transactions -->
+          <div class="col-sm-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">All transactions</h5>
+                <p class="card-text">This is quick access to view all transactions</p>
+                <router-link to="/transactions/employee" class="btn btn-primary">Transactions view</router-link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- Customer Menu -->
