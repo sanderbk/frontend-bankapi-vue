@@ -9,12 +9,12 @@
       <table class="table align-middle mb-0 bg-white shadow-sm">
         <thead class="bg-light">
         <tr>
-          <th @click="sortBy('from')">From</th>
-          <th @click="sortBy('to')">To</th>
-          <th @click="sortBy('amount')">Amount</th>
-          <th @click="sortBy('timestamp')">Date</th>
-          <th @click="sortBy('userPerforming')">Initiator</th>
-          <th @click="sortBy('transactionType')">Type</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Initiator</th>
+          <th>Type</th>
         </tr>
         </thead>
         <tbody>
@@ -23,7 +23,7 @@
           <td>{{ transaction.to }}</td>
           <td>€{{ transaction.amount }}</td>
           <td>{{ formatDate(transaction.timestamp) }}</td>
-          <td>{{transaction.userPerforming}}</td>
+          <td>{{ transaction.userPerforming }}</td>
           <td>{{ transaction.transactionType }}</td>
         </tr>
         </tbody>
@@ -44,8 +44,6 @@ export default {
   data() {
     return {
       transactions: [],
-      sortKey: "",
-      sortOrder: 1,
     };
   },
   methods: {
@@ -58,15 +56,6 @@ export default {
       const endIndex = fromField.indexOf(",", startIndex);
       return fromField.substring(startIndex, endIndex);
     },
-    sortBy(key) {
-      if (this.sortKey === key) {
-        this.sortOrder = -this.sortOrder;
-      } else {
-        this.sortKey = key;
-        this.sortOrder = 1;
-      }
-      this.fetchTransactions();
-    },
     fetchTransactions() {
       let token = localStorage.getItem("token");
       axios
@@ -78,7 +67,7 @@ export default {
             },
           })
           .then((response) => {
-            this.transactions = response.data;
+            this.transactions = response.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
           })
           .catch((error) => {
             console.log(error);
