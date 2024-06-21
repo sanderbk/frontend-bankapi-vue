@@ -68,7 +68,6 @@
             <span class="input-group-text">Amount to transfer: €</span>
             <input
               @keypress="isNumber($event)"
-              selected
               type="text"
               required="required"
               :disabled="!disable"
@@ -160,7 +159,6 @@ export default {
         })
       .catch((error) => {
         this.errMsg = "User not found";
-        console.log("gaat niet goed");
         console.log(error);
       });
     },
@@ -218,23 +216,10 @@ export default {
     },
     makeTrans() {
       const balFloat = parseFloat(this.balInput);
-      if (this.myIban != this.toIban) {
-        if (this.toIban) {
-          if (balFloat) {
-            if (this.myIban) {
-              this.makeTransAxios();
-            } else {
-              this.errorMsg = "Something went wrong selecting your iban.";
-            }
-          } else {
-            this.errorMsg = "Your balance is too low";
-          }
-        } else {
-          this.errorMsg = "No correct iban has been set to make a transaction";
-        }
-        console.log(balFloat);
+      if (!isNaN(balFloat) && balFloat > 0) {
+        this.makeTransAxios();
       } else {
-        this.errorMsg = "Iban cant be the same you are transfering to";
+        this.errorMsg = "Please enter a valid amount greater than 0.";
       }
     },
 
@@ -275,7 +260,7 @@ export default {
           .post("transactions", data, config)
           .then((response) => {
             console.log(response);
-            this.$router.replace("/accounts");
+            this.$router.replace("/transactions");
           })
           .catch((error) => {
             this.errorMsg = error.response.data.reason;
