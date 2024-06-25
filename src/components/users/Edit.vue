@@ -176,28 +176,22 @@ export default {
           "Content-Type": "application/json",
         },
       };
-      var today = new Date();
-      const data = JSON.stringify({
-        userTypes: ["ROLE_CUSTOMER"],
-        firstname: this.firstname,
-        lastname: this.lastname,
-        email: this.email,
-        phone: this.phone,
-        registeredOn: today.toJSON(),
-        dayLimit: parseFloat(this.dayLimit),
-        transLimit: parseFloat(this.transLimit),
-        active: true,
-      });
       axios
-        .put("users/" + this.username, data, config)
+        .put(
+          `/users/${this.username}?dayLimit=${parseFloat(
+            this.dayLimit
+          )}&transLimit=${parseFloat(this.transLimit)}`,
+          {},
+          config
+        )
         .then((response) => {
-          this.loading = false; // Set loading to false
+          this.loading = false;
           this.$router.replace("/home");
           console.log(response);
         })
         .catch((error) => {
           this.errorms = error.response.data.reason;
-          this.loading = false; // Set loading to false
+          this.loading = false;
           console.log(error);
         });
     },
