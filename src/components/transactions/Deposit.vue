@@ -4,8 +4,8 @@
       Please select an account in the dropdown
     </h1>
     <div class="form-container">
-      <div class="">
-        <h1 v-if="balance" class="text-center text-muted">
+      <div v-if="balance !== null">
+        <h1 class="text-center text-muted">
           Current account balance: €{{ balance }}
         </h1>
       </div>
@@ -28,15 +28,14 @@
           </option>
         </select>
       </div>
-      <form v-on:submit.prevent="login" ref="depoform">
-        <div v-if="balance" class="form-hider">
+      <form v-on:submit.prevent="deposit" ref="depoform">
+        <div v-if="balance !== null" class="form-hider">
           <div class="input-group mb-3">
             <span class="input-group-text">Amount to deposit: €</span>
             <input
                 @keypress="isNumber($event)"
-                selected
                 type="text"
-                required="required"
+                required
                 v-model="balInput"
                 class="text-center form-control"
             />
@@ -44,51 +43,49 @@
           <div class="input-group mb-3">
             <span class="input-group-text">Pincode</span>
             <div class="input-wrapper">
-              <div>
-                <div class="input-group">
-                  <input
-                      class="form-control"
-                      :disabled="disable"
-                      v-model.number="pin_0"
-                      v-on:keyup.right="pin_focus('pin_1')"
-                      v-on:keypress="is_valid_pin_value($event, 'pin_0')"
-                      ref="pin_0"
-                      type="text"
-                      placeholder="0"
-                  />
-                  <input
-                      class="form-control"
-                      :disabled="disable"
-                      v-model.number="pin_1"
-                      v-on:keyup.left="pin_focus('pin_0')"
-                      v-on:keyup.right="pin_focus('pin_2')"
-                      v-on:keypress="is_valid_pin_value($event, 'pin_1')"
-                      ref="pin_1"
-                      type="text"
-                      placeholder="0"
-                  />
-                  <input
-                      class="form-control"
-                      :disabled="disable"
-                      v-model.number="pin_2"
-                      v-on:keyup.left="pin_focus('pin_1')"
-                      v-on:keyup.right="pin_focus('pin_3')"
-                      v-on:keypress="is_valid_pin_value($event, 'pin_2')"
-                      ref="pin_2"
-                      type="text"
-                      placeholder="0"
-                  />
-                  <input
-                      class="form-control"
-                      :disabled="disable"
-                      v-model.number="pin_3"
-                      v-on:keyup.left="pin_focus('pin_2')"
-                      v-on:keypress="is_valid_pin_value($event, 'pin_3')"
-                      ref="pin_3"
-                      type="text"
-                      placeholder="0"
-                  />
-                </div>
+              <div class="input-group">
+                <input
+                    class="form-control"
+                    :disabled="disable"
+                    v-model.number="pin_0"
+                    v-on:keyup.right="pin_focus('pin_1')"
+                    v-on:keypress="is_valid_pin_value($event, 'pin_0')"
+                    ref="pin_0"
+                    type="text"
+                    placeholder="0"
+                />
+                <input
+                    class="form-control"
+                    :disabled="disable"
+                    v-model.number="pin_1"
+                    v-on:keyup.left="pin_focus('pin_0')"
+                    v-on:keyup.right="pin_focus('pin_2')"
+                    v-on:keypress="is_valid_pin_value($event, 'pin_1')"
+                    ref="pin_1"
+                    type="text"
+                    placeholder="0"
+                />
+                <input
+                    class="form-control"
+                    :disabled="disable"
+                    v-model.number="pin_2"
+                    v-on:keyup.left="pin_focus('pin_1')"
+                    v-on:keyup.right="pin_focus('pin_3')"
+                    v-on:keypress="is_valid_pin_value($event, 'pin_2')"
+                    ref="pin_2"
+                    type="text"
+                    placeholder="0"
+                />
+                <input
+                    class="form-control"
+                    :disabled="disable"
+                    v-model.number="pin_3"
+                    v-on:keyup.left="pin_focus('pin_2')"
+                    v-on:keypress="is_valid_pin_value($event, 'pin_3')"
+                    ref="pin_3"
+                    type="text"
+                    placeholder="0"
+                />
               </div>
             </div>
           </div>
@@ -110,7 +107,7 @@
 
 <script>
 import axios from "../../axios-auth";
-import { mapGetters } from "vuex";
+import {mapGetters} from "vuex";
 
 export default {
   name: "Deposit",
@@ -127,11 +124,11 @@ export default {
       pin_3: null,
       pinfull: null,
       pintoCheck: null,
-      selected: "current",
+      selected: null,
       disable: false,
       accounts: [],
       userID: "",
-      balance: "",
+      balance: null,
       balInput: "",
       errorMsg: "",
       myIban: "",
@@ -139,9 +136,6 @@ export default {
     };
   },
   watch: {
-    pin: function () {
-      this.$bus.$emit("PIN/change", this.pin);
-    },
     pin_0: function (nv) {
       if (nv.toString().length !== 0) {
         this.$refs.pin_1.focus();
@@ -164,28 +158,28 @@ export default {
   mounted() {
     this.token = localStorage.getItem("token");
     this.userID = localStorage.getItem("userID");
-    axios
-        .request({
-          url: "accounts/getByUserID/" + this.userID,
-          method: "get",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json; charset=UTF-8",
-            Authorization: `Bearer ${this.token}`,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.accounts = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.errored = true;
-        })
-        .finally(() => (this.loading = false));
+    this.fetchAccounts();
   },
   methods: {
-    isNumber: function (evt) {
+    fetchAccounts() {
+      axios
+          .request({
+            url: "accounts/getByUserID/" + this.userID,
+            method: "get",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json; charset=UTF-8",
+              Authorization: `Bearer ${this.token}`,
+            },
+          })
+          .then((response) => {
+            this.accounts = response.data;
+          })
+          .catch((error) => {
+            console.error("Error fetching accounts:", error);
+          });
+    },
+    isNumber(evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
       if (
@@ -198,11 +192,11 @@ export default {
         return true;
       }
     },
-    pin_focus: function (ref) {
+    pin_focus(ref) {
       this.$refs[ref].focus();
       this.$refs[ref].select();
     },
-    is_valid_pin_value: function (e, pin_N) {
+    is_valid_pin_value(e, pin_N) {
       const char = String.fromCharCode(e.keyCode);
       const is_value_selected =
           this[pin_N] !== null &&
@@ -237,9 +231,9 @@ export default {
           this.pinfull = parseInt(stringCode);
           this.depositAxios();
         } else {
-          this.errorMsg = "Pincode is incorrect or amount must be greater than 0";
+          this.errorMsg =
+              "Pincode is incorrect or amount must be greater than 0";
         }
-        console.log(stringCode + this.pintoCheck);
       } else {
         this.errorMsg = "Please fill in all the fields";
       }
@@ -309,10 +303,12 @@ export default {
             this.$refs.depoform.reset();
           })
           .catch((error) => {
-            console.log(error);
-          })
-          .finally(() => (this.loading = false));
+            console.error("Error fetching account details:", error);
+          });
     },
   },
 };
 </script>
+
+<style scoped>
+</style>
