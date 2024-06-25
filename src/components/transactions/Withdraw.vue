@@ -19,11 +19,11 @@
         >
           <option :value="null" disabled>Select Account</option>
           <option
-          v-for="account in accounts"
-        :key="account.iban"
-        :value="account.iban"
+              v-for="account in accounts"
+              :key="account.iban"
+              :value="account.iban"
           >
-          Iban: {{ account.iban }} Owner: {{account.username}} AccountType: {{account.accountType}}
+            Iban: {{ account.iban }} Owner: {{ account.username }} AccountType: {{ account.accountType }}
           </option>
         </select>
       </div>
@@ -111,6 +111,7 @@
 <script>
 import axios from "../../axios-auth";
 import { mapGetters } from "vuex";
+
 export default {
   name: "Withdraw",
   computed: {
@@ -189,11 +190,7 @@ export default {
     isNumber: function (evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
-      if (
-          charCode > 31 &&
-          (charCode < 48 || charCode > 57) &&
-          charCode !== 46
-      ) {
+      if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
         evt.preventDefault();
       } else {
         return true;
@@ -222,7 +219,7 @@ export default {
     },
     withdraw() {
       if (
-          this.balInput != "" &&
+          this.balInput !== "" &&
           this.pin_0 != null &&
           this.pin_1 != null &&
           this.pin_2 != null &&
@@ -234,11 +231,12 @@ export default {
             this.pin_2.toString() +
             this.pin_3.toString();
         const balFloat = parseFloat(this.balInput);
-        if (this.balance - balFloat < this.absLimit) {
+        if (balFloat <= 0) {
+          this.errorMsg = "Amount must be greater than 0";
+        } else if (this.balance - balFloat < this.absLimit) {
           this.errorMsg = "Cannot create transaction; Cannot exceed absolute limit.";
         } else {
-          if (stringCode == this.pintoCheck && balFloat) {
-            //deposit+ axios method here
+          if (stringCode == this.pintoCheck) {
             this.pinfull = parseInt(stringCode);
             this.withdrawAxios();
           } else {
@@ -246,7 +244,7 @@ export default {
           }
         }
       } else {
-        this.errorMsg = "please fill in all the fields";
+        this.errorMsg = "Please fill in all the fields";
       }
     },
     withdrawAxios() {

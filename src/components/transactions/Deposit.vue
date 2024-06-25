@@ -19,11 +19,12 @@
         >
           <option :value="null" disabled>Select Account</option>
           <option
-          v-for="account in accounts"
-        :key="account.iban"
-        :value="account.iban"
+              v-for="account in accounts"
+              :key="account.iban"
+              :value="account.iban"
           >
-          Iban: {{ account.iban }} Owner: {{account.username}} AccountType: {{account.accountType}}
+            Iban: {{ account.iban }} Owner: {{ account.username }} AccountType:
+            {{ account.accountType }}
           </option>
         </select>
       </div>
@@ -66,7 +67,6 @@
                       type="text"
                       placeholder="0"
                   />
-
                   <input
                       class="form-control"
                       :disabled="disable"
@@ -110,7 +110,7 @@
 
 <script>
 import axios from "../../axios-auth";
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "Deposit",
@@ -221,7 +221,7 @@ export default {
     },
     deposit() {
       if (
-          this.balInput != "" &&
+          this.balInput !== "" &&
           this.pin_0 != null &&
           this.pin_1 != null &&
           this.pin_2 != null &&
@@ -233,16 +233,15 @@ export default {
             this.pin_2.toString() +
             this.pin_3.toString();
         const balFloat = parseFloat(this.balInput);
-        if (stringCode == this.pintoCheck && balFloat) {
-          //deposit axios method here
+        if (stringCode == this.pintoCheck && balFloat > 0) {
           this.pinfull = parseInt(stringCode);
           this.depositAxios();
         } else {
-          this.errorMsg = "Pincode is incorrect";
+          this.errorMsg = "Pincode is incorrect or amount must be greater than 0";
         }
         console.log(stringCode + this.pintoCheck);
       } else {
-        this.errorMsg = "please fill in all the fields";
+        this.errorMsg = "Please fill in all the fields";
       }
     },
     depositAxios() {

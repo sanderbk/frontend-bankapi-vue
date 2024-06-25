@@ -16,7 +16,7 @@
         </div>
       </div>
       <div v-if="errorMessage" class="text-danger">{{ errorMessage }}</div>
-      <table class="table align-middle mb-0 bg-white shadow-sm">
+      <table v-if="transactions.length > 0" class="table align-middle mb-0 bg-white shadow-sm">
         <thead class="bg-light">
         <tr>
           <th>From</th>
@@ -38,13 +38,16 @@
         </tr>
         </tbody>
       </table>
+      <div v-else class="text-center p-4">
+        No transactions found.
+      </div>
     </div>
   </section>
 </template>
 
 <script>
 import axios from "../../axios-auth";
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "AllTransactions",
@@ -131,11 +134,11 @@ export default {
         });
         this.selectedUser = response.data;
         await this.fetchTransactionsForUser(this.selectedUser.id);
-        // Reset error message on successful search
         this.errorMessage = "";
       } catch (error) {
         console.error("Error searching user:", error);
         this.errorMessage = "User not found.";
+        this.transactions = [];
       }
     },
     async fetchTransactionsForUser(userId) {
@@ -154,6 +157,12 @@ export default {
         this.fetchUserDetails();
       } catch (error) {
         console.error("Error fetching transactions for user:", error);
+        if (error.response && error.response.data && error.response.data.reason) {
+          this.errorMessage = error.response.data.reason;
+        } else {
+          this.errorMessage = "An error occurred while fetching transactions.";
+        }
+        this.transactions = [];
       }
     },
     goBack() {
@@ -168,7 +177,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 </style>
