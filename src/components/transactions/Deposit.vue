@@ -1,28 +1,20 @@
 <template>
   <div v-if="isLoggedIn" class="container">
-    <h1 class="text-center my-2 text-muted">
-      Please select an account in the dropdown
-    </h1>
+    <h1 class="text-center my-2 text-muted">Please select an account in the dropdown</h1>
     <div class="form-container">
       <div v-if="balance !== null">
-        <h1 class="text-center text-muted">
-          Current account balance: €{{ balance }}
-        </h1>
+        <h1 class="text-center text-muted">Current account balance: €{{ balance }}</h1>
       </div>
 
       <div class="input-group mx-0 text-center mb-3">
         <select
-            @change="onChange($event)"
-            class="w-100 text-center mx-0"
-            :disabled="disable"
-            v-model="selected"
+          @change="onChange($event)"
+          class="w-100 text-center mx-0"
+          :disabled="disable"
+          v-model="selected"
         >
           <option :value="null" disabled>Select Account</option>
-          <option
-              v-for="account in accounts"
-              :key="account.iban"
-              :value="account.iban"
-          >
+          <option v-for="account in accounts" :key="account.iban" :value="account.iban">
             Iban: {{ account.iban }} Owner: {{ account.username }} AccountType:
             {{ account.accountType }}
           </option>
@@ -33,11 +25,11 @@
           <div class="input-group mb-3">
             <span class="input-group-text">Amount to deposit: €</span>
             <input
-                @keypress="isNumber($event)"
-                type="text"
-                required
-                v-model="balInput"
-                class="text-center form-control"
+              @keypress="isNumber($event)"
+              type="text"
+              required
+              v-model="balInput"
+              class="text-center form-control"
             />
           </div>
           <div class="input-group mb-3">
@@ -45,56 +37,52 @@
             <div class="input-wrapper">
               <div class="input-group">
                 <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_0"
-                    v-on:keyup.right="pin_focus('pin_1')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_0')"
-                    ref="pin_0"
-                    type="text"
-                    placeholder="0"
+                  class="form-control"
+                  :disabled="disable"
+                  v-model.number="pin_0"
+                  v-on:keyup.right="pin_focus('pin_1')"
+                  v-on:keypress="is_valid_pin_value($event, 'pin_0')"
+                  ref="pin_0"
+                  type="text"
+                  placeholder="0"
                 />
                 <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_1"
-                    v-on:keyup.left="pin_focus('pin_0')"
-                    v-on:keyup.right="pin_focus('pin_2')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_1')"
-                    ref="pin_1"
-                    type="text"
-                    placeholder="0"
+                  class="form-control"
+                  :disabled="disable"
+                  v-model.number="pin_1"
+                  v-on:keyup.left="pin_focus('pin_0')"
+                  v-on:keyup.right="pin_focus('pin_2')"
+                  v-on:keypress="is_valid_pin_value($event, 'pin_1')"
+                  ref="pin_1"
+                  type="text"
+                  placeholder="0"
                 />
                 <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_2"
-                    v-on:keyup.left="pin_focus('pin_1')"
-                    v-on:keyup.right="pin_focus('pin_3')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_2')"
-                    ref="pin_2"
-                    type="text"
-                    placeholder="0"
+                  class="form-control"
+                  :disabled="disable"
+                  v-model.number="pin_2"
+                  v-on:keyup.left="pin_focus('pin_1')"
+                  v-on:keyup.right="pin_focus('pin_3')"
+                  v-on:keypress="is_valid_pin_value($event, 'pin_2')"
+                  ref="pin_2"
+                  type="text"
+                  placeholder="0"
                 />
                 <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_3"
-                    v-on:keyup.left="pin_focus('pin_2')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_3')"
-                    ref="pin_3"
-                    type="text"
-                    placeholder="0"
+                  class="form-control"
+                  :disabled="disable"
+                  v-model.number="pin_3"
+                  v-on:keyup.left="pin_focus('pin_2')"
+                  v-on:keypress="is_valid_pin_value($event, 'pin_3')"
+                  ref="pin_3"
+                  type="text"
+                  placeholder="0"
                 />
               </div>
             </div>
           </div>
           <div class="input-group mb-3">
-            <button
-                type="button"
-                class="w-100 btn btn-primary"
-                @click="deposit()"
-            >
+            <button type="button" class="w-100 btn btn-primary" @click="deposit()">
               Deposit
             </button>
           </div>
@@ -107,7 +95,7 @@
 
 <script>
 import axios from "../../axios-auth";
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "Deposit",
@@ -163,30 +151,26 @@ export default {
   methods: {
     fetchAccounts() {
       axios
-          .request({
-            url: "accounts/getByUserID/" + this.userID,
-            method: "get",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json; charset=UTF-8",
-              Authorization: `Bearer ${this.token}`,
-            },
-          })
-          .then((response) => {
-            this.accounts = response.data;
-          })
-          .catch((error) => {
-            console.error("Error fetching accounts:", error);
-          });
+        .request({
+          url: "accounts/userid/" + this.userID,
+          method: "get",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json; charset=UTF-8",
+            Authorization: `Bearer ${this.token}`,
+          },
+        })
+        .then((response) => {
+          this.accounts = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching accounts:", error);
+        });
     },
     isNumber(evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
-      if (
-          charCode > 31 &&
-          (charCode < 48 || charCode > 57) &&
-          charCode !== 46
-      ) {
+      if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
         evt.preventDefault();
       } else {
         return true;
@@ -199,15 +183,15 @@ export default {
     is_valid_pin_value(e, pin_N) {
       const char = String.fromCharCode(e.keyCode);
       const is_value_selected =
-          this[pin_N] !== null &&
-          this.$refs[pin_N].selectionStart === 0 &&
-          this.$refs[pin_N].selectionEnd === this[pin_N].toString().length;
+        this[pin_N] !== null &&
+        this.$refs[pin_N].selectionStart === 0 &&
+        this.$refs[pin_N].selectionEnd === this[pin_N].toString().length;
       if (
-          (this[pin_N] === null ||
-              this[pin_N].toString().length === 0 ||
-              is_value_selected) &&
-          parseInt(char, 10) >= 0 &&
-          parseInt(char, 10) <= 9
+        (this[pin_N] === null ||
+          this[pin_N].toString().length === 0 ||
+          is_value_selected) &&
+        parseInt(char, 10) >= 0 &&
+        parseInt(char, 10) <= 9
       ) {
         return true;
       }
@@ -215,24 +199,23 @@ export default {
     },
     deposit() {
       if (
-          this.balInput !== "" &&
-          this.pin_0 != null &&
-          this.pin_1 != null &&
-          this.pin_2 != null &&
-          this.pin_3 != null
+        this.balInput !== "" &&
+        this.pin_0 != null &&
+        this.pin_1 != null &&
+        this.pin_2 != null &&
+        this.pin_3 != null
       ) {
         const stringCode =
-            this.pin_0.toString() +
-            this.pin_1.toString() +
-            this.pin_2.toString() +
-            this.pin_3.toString();
+          this.pin_0.toString() +
+          this.pin_1.toString() +
+          this.pin_2.toString() +
+          this.pin_3.toString();
         const balFloat = parseFloat(this.balInput);
         if (stringCode == this.pintoCheck && balFloat > 0) {
           this.pinfull = parseInt(stringCode);
           this.depositAxios();
         } else {
-          this.errorMsg =
-              "Pincode is incorrect or amount must be greater than 0";
+          this.errorMsg = "Pincode is incorrect or amount must be greater than 0";
         }
       } else {
         this.errorMsg = "Please fill in all the fields";
@@ -241,17 +224,17 @@ export default {
     depositAxios() {
       const today = new Date();
       const date =
-          today.getFullYear() +
-          "-" +
-          ("0" + (today.getMonth() + 1)).slice(-2) +
-          "-" +
-          ("0" + today.getDate()).slice(-2) +
-          "T" +
-          ("0" + today.getHours()).slice(-2) +
-          ":" +
-          ("0" + today.getMinutes()).slice(-2) +
-          ":" +
-          ("0" + today.getSeconds()).slice(-2);
+        today.getFullYear() +
+        "-" +
+        ("0" + (today.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("0" + today.getDate()).slice(-2) +
+        "T" +
+        ("0" + today.getHours()).slice(-2) +
+        ":" +
+        ("0" + today.getMinutes()).slice(-2) +
+        ":" +
+        ("0" + today.getSeconds()).slice(-2);
       const data = JSON.stringify({
         transactionType: "deposit",
         timestamp: date,
@@ -270,45 +253,44 @@ export default {
       };
 
       axios
-          .post("transactions", data, config)
-          .then((response) => {
-            console.log(response);
-            this.$router.replace("/transactions");
-          })
-          .catch((error) => {
-            this.errorMsg = error.response.data.reason;
-          });
+        .post("transactions", data, config)
+        .then((response) => {
+          console.log(response);
+          this.$router.replace("/transactions");
+        })
+        .catch((error) => {
+          this.errorMsg = error.response.data.reason;
+        });
     },
     onChange(event) {
       axios
-          .request({
-            url: "accounts/getByIban/" + event.target.value,
-            method: "get",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json; charset=UTF-8",
-              Authorization: `Bearer ${this.token}`,
-            },
-          })
-          .then((response) => {
-            this.pin_0 = null;
-            this.pin_1 = null;
-            this.pin_2 = null;
-            this.pin_3 = null;
-            this.balInput = null;
-            this.errorMsg = "";
-            this.balance = response.data.balance;
-            this.pintoCheck = response.data.pinCode;
-            this.myIban = response.data.iban;
-            this.$refs.depoform.reset();
-          })
-          .catch((error) => {
-            console.error("Error fetching account details:", error);
-          });
+        .request({
+          url: "accounts/iban/" + event.target.value,
+          method: "get",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json; charset=UTF-8",
+            Authorization: `Bearer ${this.token}`,
+          },
+        })
+        .then((response) => {
+          this.pin_0 = null;
+          this.pin_1 = null;
+          this.pin_2 = null;
+          this.pin_3 = null;
+          this.balInput = null;
+          this.errorMsg = "";
+          this.balance = response.data.balance;
+          this.pintoCheck = response.data.pinCode;
+          this.myIban = response.data.iban;
+          this.$refs.depoform.reset();
+        })
+        .catch((error) => {
+          console.error("Error fetching account details:", error);
+        });
     },
   },
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
