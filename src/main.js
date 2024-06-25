@@ -7,6 +7,7 @@ import store from './store/store'
 import Login from './components/users/Login.vue';
 import Register from './components/users/Register.vue';
 import Users from './components/users/Users.vue';
+import UsersAll from './components/users/UsersAll.vue';
 import Edit from './components/users/Edit.vue';
 
 import HomePage from './components/HomePage.vue';
@@ -30,6 +31,7 @@ const routes = [
     { path: '/login', component: Login },
     { path: '/register', component: Register },
     { path: '/users', component: Users },
+    { path: '/usersall', component: UsersAll },
     { path: '/home', component: HomePage },
     { path: '/edituser', component: Edit },
 

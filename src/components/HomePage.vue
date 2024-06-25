@@ -7,32 +7,47 @@
         <h2 class="text-center text-info">Employee menu</h2>
         <div class="row">
           <!-- Manage Accounts -->
-          <div class="col-sm-4">
+          <div class="col-sm-3">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Manage accounts</h5>
                 <p class="card-text">This is quick access to manage the accounts</p>
-                <router-link to="/accounts" class="btn btn-primary">Accounts view</router-link>
+                <router-link to="/accounts" class="btn btn-primary"
+                  >Accounts view</router-link
+                >
               </div>
             </div>
           </div>
           <!-- Manage Users -->
-          <div class="col-sm-4">
+          <div class="col-sm-3">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Manage users</h5>
+                <p class="card-text">This is quick access to manage the users</p>
+                <router-link to="/usersall" class="btn btn-primary"
+                  >User view</router-link
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Manage users without account</h5>
                 <p class="card-text">This is quick access to manage the users</p>
                 <router-link to="/users" class="btn btn-primary">User view</router-link>
               </div>
             </div>
           </div>
           <!-- All Transactions -->
-          <div class="col-sm-4">
+          <div class="col-sm-3">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">All transactions</h5>
                 <p class="card-text">This is quick access to view all transactions</p>
-                <router-link to="/transactions/employee" class="btn btn-primary">Transactions view</router-link>
+                <router-link to="/transactions/employee" class="btn btn-primary"
+                  >Transactions view</router-link
+                >
               </div>
             </div>
           </div>
@@ -48,7 +63,9 @@
               <div class="card-body">
                 <h5 class="card-title">Deposit</h5>
                 <p class="card-text">This is quick access to make a deposit</p>
-                <router-link to="/deposit" class="btn btn-success text-white">Deposit</router-link>
+                <router-link to="/deposit" class="btn btn-success text-white"
+                  >Deposit</router-link
+                >
               </div>
             </div>
           </div>
@@ -58,7 +75,9 @@
               <div class="card-body">
                 <h5 class="card-title">Withdraw</h5>
                 <p class="card-text">This is quick access to make a withdrawal</p>
-                <router-link to="/withdraw" class="btn btn-info text-white">Withdraw</router-link>
+                <router-link to="/withdraw" class="btn btn-info text-white"
+                  >Withdraw</router-link
+                >
               </div>
             </div>
           </div>
@@ -68,17 +87,22 @@
               <div class="card-body">
                 <h5 class="card-title">Make a transaction</h5>
                 <p class="card-text">This is quick access to make a transaction</p>
-                <router-link to="/transaction" class="btn btn-warning text-white">Make transaction</router-link>
+                <router-link to="/transaction" class="btn btn-warning text-white"
+                  >Make transaction</router-link
+                >
               </div>
             </div>
           </div>
           <!-- View Transactions -->
           <div class="col-sm-4">
-            <div class="card mt-4"> <!-- Add margin top -->
+            <div class="card mt-4">
+              <!-- Add margin top -->
               <div class="card-body">
                 <h5 class="card-title">View Transactions</h5>
                 <p class="card-text">This is quick access to view your transactions</p>
-                <router-link to="/transactions" class="btn btn-primary">View Transactions</router-link>
+                <router-link to="/transactions" class="btn btn-primary"
+                  >View Transactions</router-link
+                >
               </div>
             </div>
           </div>
@@ -88,7 +112,10 @@
     <!-- Not Logged In -->
     <div v-if="!isLoggedIn" class="text-center">
       <p>You are not logged in. Please login!</p>
-      <router-link to="/login" class="btn w-100 text-center submit vue-butt btn-success btn-lg">
+      <router-link
+        to="/login"
+        class="btn w-100 text-center submit vue-butt btn-success btn-lg"
+      >
         <span>Go to login</span>
       </router-link>
     </div>

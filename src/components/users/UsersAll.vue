@@ -5,45 +5,61 @@
         <button @click="this.$router.push('/home')" class="py-2 mx-2 btn btn-danger">
           Go Back
         </button>
-        <button
-          @click="this.$router.push('/addaccount')"
-          class="py-2 mx-2 btn btn-primary"
-        >
-          Add new Account
-        </button>
       </div>
+      <h1 class="text-center text-muted">Here are all users</h1>
       <table class="table align-middle mb-0 bg-white shadow-sm">
         <thead class="bg-light">
           <tr>
-            <th>IBan</th>
-            <th>AccountType</th>
-            <th>ActiveStatus</th>
-            <th>Balance</th>
-            <th>AbsLimit</th>
-            <th>Owner</th>
+            <th>id</th>
+            <th>Username</th>
+            <th>Fullname</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Account</th>
           </tr>
         </thead>
-        <tbody>
-          <tr v-for="account in accounts" :key="account.id" :account="account">
+        <tbody v-if="users">
+          <tr v-for="user in users" :key="user.id" :user="user">
             <td>
               <div class="d-flex align-items-center">
                 <div class="ms-3">
-                  <p class="text-muted mb-0">{{ account.iban }}</p>
+                  <p class="text-muted mb-0">{{ user.id }}</p>
                 </div>
               </div>
             </td>
             <td>
-              <p class="fw-normal mb-1">{{ account.accountType }}</p>
+              <p class="fw-normal mb-1">{{ user.username }}</p>
             </td>
             <td>
               <span class="badge text-primary badge-success rounded-pill d-inline">{{
-                account.active
+                user.firstname + " " + user.lastname
               }}</span>
             </td>
-            <td>€{{ account.balance }}</td>
-            <td>€{{ account.absLimit }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phone }}</td>
             <td>
-              {{ account.username }}
+              <button
+                @click="
+                  this.$router.push({
+                    path: '/addaccount',
+                    query: { username: user.username },
+                  })
+                "
+                class="py-2 mx-2 btn btn-primary"
+              >
+                ➕ Add new Account
+              </button>
+              <button
+                @click="
+                  this.$router.push({
+                    path: '/edituser',
+                    query: { username: user.username },
+                  })
+                "
+                class="py-2 mx-2 btn btn-secondary"
+              >
+                ✏️ Edit Account
+              </button>
             </td>
           </tr>
         </tbody>
@@ -56,21 +72,21 @@
 import axios from "../../axios-auth";
 import { mapGetters } from "vuex";
 export default {
-  name: "Index",
+  name: "Users",
   computed: {
     ...mapGetters(["isAdmin"]),
   },
   setup() {},
   data() {
     return {
-      accounts: [],
+      users: [],
     };
   },
   mounted() {
     let token = localStorage.getItem("token");
     axios
       .request({
-        url: "accounts",
+        url: "users",
         method: "get",
         headers: {
           Accept: "application/json",
@@ -79,9 +95,7 @@ export default {
         },
       })
       .then((response) => {
-        this.accounts = response.data.filter(
-          (account) => account.username !== "InhollandBank"
-        );
+        this.users = response.data;
       })
       .catch((error) => {
         console.log(error);

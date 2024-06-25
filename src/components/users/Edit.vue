@@ -1,7 +1,7 @@
 <template :v-if="isLoggedIn">
   <section class="ftco-section">
     <div class="container h-100">
-      <div class="row justify-content-center">
+      <div class="row vh-100 justify-content-center">
         <div class="col-md-7 col-lg-5">
           <div class="wrap text-center">
             <div class="text-muted login-wrap p-2 p-md-2">
@@ -209,6 +209,14 @@ export default {
 .vue-butt {
   display: inline-block;
 }
+.vh-100 {
+  height: 100vh;
+}
+
+body {
+  background-color: #eeeeee;
+}
+
 .ftco-section {
   height: 100%;
   background: radial-gradient(circle, rgb(238, 238, 238) 0%, rgb(233, 233, 233));

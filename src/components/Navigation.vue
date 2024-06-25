@@ -14,12 +14,8 @@
       </button>
       <div class="navbar-collapse collapse" id="collapseNavbar">
         <ul v-if="isLoggedIn" class="navbar-nav">
-          <router-link to="/deposit" class="nav-link nav-item">
-            Deposit
-          </router-link>
-          <router-link to="/withdraw" class="nav-link nav-item">
-            Withdraw
-          </router-link>
+          <router-link to="/deposit" class="nav-link nav-item"> Deposit </router-link>
+          <router-link to="/withdraw" class="nav-link nav-item"> Withdraw </router-link>
           <router-link to="/transaction" class="nav-link nav-item">
             Transaction
           </router-link>
@@ -39,9 +35,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li>
-                <router-link to="/accounts" class="dropdown-item"
-                  >Accounts</router-link
-                >
+                <router-link to="/accounts" class="dropdown-item">Accounts</router-link>
               </li>
               <li>
                 <router-link class="dropdown-item" to="/transaction"
@@ -50,8 +44,11 @@
               </li>
               <li>
                 <router-link to="/users" class="dropdown-item"
-                  >Users</router-link
+                  >Users without account</router-link
                 >
+              </li>
+              <li>
+                <router-link to="/usersall" class="dropdown-item">All users</router-link>
               </li>
             </ul>
           </li>
