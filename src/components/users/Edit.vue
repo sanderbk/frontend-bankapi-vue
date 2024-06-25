@@ -1,17 +1,16 @@
-<template :v-if="!isLoggedIn">
+<template :v-if="isLoggedIn">
   <section class="ftco-section">
-    <div class="container">
+    <div class="container h-100">
       <div class="row justify-content-center">
         <div class="col-md-7 col-lg-5">
           <div class="wrap text-center">
-            <img class="w-50 mt-4" src="@/assets/inhollandbank.png" />
             <div class="text-muted login-wrap p-2 p-md-2">
               <div class="d-flex">
                 <div class="w-100">
-                  <h3 class="mb-4">Register an account</h3>
+                  <h3 class="mb-4">Edit an user limit</h3>
                 </div>
               </div>
-              <form @submit="checkForm" v-on:submit.prevent="registerUser">
+              <form @submit="checkForm" v-on:submit.prevent="updateUser">
                 <div class="form-group mt-3">
                   <label class="form-control-placeholder" for="username">Username</label>
                   <input
@@ -19,28 +18,15 @@
                     class="form-control"
                     required="required"
                     v-model="username"
+                    disabled
                   />
                 </div>
                 <div class="form-group">
-                  <label class="form-control-placeholder" for="password">Password</label>
-                  <input
-                    v-model="password"
-                    id="password-field"
-                    type="password"
-                    class="form-control"
-                    required="required"
-                  />
-
-                  <span
-                    toggle="#password-field"
-                    class="fa fa-fw fa-eye field-icon toggle-password"
-                  ></span>
-                </div>
-                <div class="form-group">
-                  <label class="form-control-placeholder" for="firstname"
+                  <label class="form-control-placeholder" for="firstname" disabled
                     >Firstname</label
                   >
                   <input
+                    disabled
                     type="text"
                     class="form-control"
                     v-model="firstname"
@@ -48,8 +34,11 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label class="form-control-placeholder" for="lastname">Lastname</label>
+                  <label class="form-control-placeholder" for="lastname" disabled
+                    >Lastname</label
+                  >
                   <input
+                    disabled
                     type="text"
                     class="form-control"
                     v-model="lastname"
@@ -57,40 +46,7 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label class="form-control-placeholder" for="dob">Date of birth</label>
-                  <Datepicker format="yyyy/MM/dd" v-model="dob"></Datepicker>
-                </div>
-                <div class="form-group">
-                  <label class="form-control-placeholder" for="address">Address</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="address"
-                    required="required"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-control-placeholder" for="email">E-mail</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    v-model="email"
-                    required="required"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-control-placeholder" for="phone">Phonenumber</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="phone"
-                    required="required"
-                  />
-                </div>
-                <!-- <div class="form-group">
-                  <label class="form-control-placeholder" for="daylimit"
-                    >Daylimit</label
-                  >
+                  <label class="form-control-placeholder" for="daylimit">Daylimit</label>
                   <input
                     @keypress="isNumber($event)"
                     type="text"
@@ -110,7 +66,7 @@
                     v-model="transLimit"
                     required="required"
                   />
-                </div> -->
+                </div>
 
                 <div class="text-center mt-4 form-group">
                   <button
@@ -119,10 +75,8 @@
                     class="btn w-100 text-center submit vue-butt btn-primary btn-lg"
                     :disabled="loading"
                   >
-                    <span v-if="!loading">Register 🔓</span>
-                    <span v-else
-                      ><i class="fa fa-spinner fa-spin"></i> Signing in...</span
-                    >
+                    <span v-if="!loading">Update user 🔄</span>
+                    <span v-else><i class="fa fa-spinner fa-spin"></i> Updating...</span>
                   </button>
                   <span> </span>
                   <span :v-if="errorms" class="w-100 text-danger">{{ errorms }}</span>
@@ -142,15 +96,12 @@
 <script>
 import axios from "../../axios-auth";
 import { mapGetters } from "vuex";
-import Datepicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
 
 export default {
-  components: { Datepicker },
   name: "Register",
   data() {
     return {
-      username: null,
+      username: this.$route.query.username || "",
       password: null,
       firstname: null,
       lastname: null,
@@ -167,22 +118,57 @@ export default {
       loading: false, // Add loading state
     };
   },
+  mounted() {
+    this.searchUser();
+  },
   computed: {
     ...mapGetters(["isLoggedIn"]),
     ...mapGetters(["isAdmin"]),
   },
-
   methods: {
+    searchUser() {
+      console.log(this.username);
+      axios
+        .get("users/username/" + this.username)
+        .then((res) => {
+          this.firstname = res.data.firstname;
+          this.lastname = res.data.lastname;
+          this.dob = res.data.dob;
+          this.address = res.data.address;
+          this.email = res.data.email;
+          this.phone = res.data.phone;
+          this.dayLimit = res.data.dayLimit;
+          this.transLimit = res.data.transLimit;
+
+          this.fetchedUser = JSON.stringify(res.data);
+          this.errMsg = "";
+          console.log(this.fetchedUser);
+          this.disable = false;
+        })
+        .catch((error) => {
+          // Use arrow function here
+          this.errMsg = "User not found";
+          console.log("gaat niet goed");
+          console.log(error);
+        });
+    },
     isNumber: function (evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
-      if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
+
+      // Allow digits (0-9), decimal point (.), and hyphen (-)
+      if (
+        charCode > 31 &&
+        (charCode < 48 || charCode > 57) &&
+        charCode !== 46 &&
+        charCode !== 45
+      ) {
         evt.preventDefault();
       } else {
         return true;
       }
     },
-    registerUser() {
+    updateUser() {
       this.loading = true; // Set loading to true
       let config = {
         headers: {
@@ -193,12 +179,8 @@ export default {
       var today = new Date();
       const data = JSON.stringify({
         userTypes: ["ROLE_CUSTOMER"],
-        username: this.username,
-        password: this.password,
         firstname: this.firstname,
         lastname: this.lastname,
-        dob: this.dob,
-        address: this.address,
         email: this.email,
         phone: this.phone,
         registeredOn: today.toJSON(),
@@ -207,10 +189,10 @@ export default {
         active: true,
       });
       axios
-        .post("users", data, config)
+        .put("users/" + this.username, data, config)
         .then((response) => {
           this.loading = false; // Set loading to false
-          this.$router.replace("/login");
+          this.$router.replace("/home");
           console.log(response);
         })
         .catch((error) => {

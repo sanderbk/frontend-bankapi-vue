@@ -2,10 +2,7 @@
   <section v-if="isAdmin" class="table-accounts mx-4 p-4">
     <div class="container">
       <div class="button-container p-2 my-2">
-        <button
-          @click="this.$router.push('/home')"
-          class="py-2 mx-2 btn btn-danger"
-        >
+        <button @click="this.$router.push('/home')" class="py-2 mx-2 btn btn-danger">
           Go Back
         </button>
       </div>
@@ -36,20 +33,35 @@
               <p class="fw-normal mb-1">{{ user.username }}</p>
             </td>
             <td>
-              <span
-                class="badge text-primary badge-success rounded-pill d-inline"
-                >{{ user.firstname + " " + user.lastname }}</span
-              >
+              <span class="badge text-primary badge-success rounded-pill d-inline">{{
+                user.firstname + " " + user.lastname
+              }}</span>
             </td>
             <td>{{ user.email }}</td>
             <td>{{ user.phone }}</td>
             <td>
               <button
-              @click="this.$router.push({ path: '/addaccount', query: { username: user.username } })"
-          class="py-2 mx-2 btn btn-primary"
-        >
-          Add new Account
-        </button>
+                @click="
+                  this.$router.push({
+                    path: '/addaccount',
+                    query: { username: user.username },
+                  })
+                "
+                class="py-2 mx-2 btn btn-primary"
+              >
+                Add new Account
+              </button>
+              <button
+                @click="
+                  this.$router.push({
+                    path: '/edituser',
+                    query: { username: user.username },
+                  })
+                "
+                class="py-2 mx-2 btn btn-secondary"
+              >
+                Edit Account
+              </button>
             </td>
           </tr>
         </tbody>
@@ -57,8 +69,6 @@
     </div>
   </section>
 </template>
-
-
 
 <script>
 import axios from "../../axios-auth";

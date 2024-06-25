@@ -7,11 +7,13 @@ import store from './store/store'
 import Login from './components/users/Login.vue';
 import Register from './components/users/Register.vue';
 import Users from './components/users/Users.vue';
+import Edit from './components/users/Edit.vue';
 
 import HomePage from './components/HomePage.vue';
 //Accounts
 import Index from './components/accounts/Index.vue';
 import AddAccount from './components/accounts/AddAccount.vue';
+
 //Transactions
 import Deposit from './components/transactions/Deposit.vue';
 import Withdraw from './components/transactions/Withdraw.vue';
@@ -29,10 +31,12 @@ const routes = [
     { path: '/register', component: Register },
     { path: '/users', component: Users },
     { path: '/home', component: HomePage },
+    { path: '/edituser', component: Edit },
 
     //account routes
     { path: '/accounts', component: Index },
     { path: '/addaccount', component: AddAccount },
+
 
     //transaction routes
     { path: '/deposit', component: Deposit },
