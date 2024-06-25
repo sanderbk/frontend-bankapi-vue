@@ -216,10 +216,10 @@ export default {
     },
     makeTrans() {
       const balFloat = parseFloat(this.balInput);
-      if (!isNaN(balFloat) && balFloat > 0) {
+      if (!isNaN(balFloat)) {
         this.makeTransAxios();
       } else {
-        this.errorMsg = "Please enter a valid amount greater than 0.";
+        this.errorMsg = "Cannot create transaction; Please enter a valid amount greater than 0.";
       }
     },
 

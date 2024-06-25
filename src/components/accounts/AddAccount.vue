@@ -3,8 +3,8 @@
     <div class="container">
       <div class="button-container p-2 my-2">
         <button
-          @click="this.$router.push('/accounts')"
-          class="py-2 mx-2 btn btn-danger"
+            @click="this.$router.push('/accounts')"
+            class="py-2 mx-2 btn btn-danger"
         >
           Go Back
         </button>
@@ -14,26 +14,26 @@
           <div class="input-group mb-3">
             <span class="input-group-text">Search for user</span>
             <input
-              :disabled="!disable"
-              type="text"
-              v-model="username"
-              class="form-control"
+                :disabled="!disable"
+                type="text"
+                v-model="username"
+                class="form-control"
             />
             <button
-              type="button"
-              :disabled="!disable"
-              @click="searchUser()"
-              class="btn btn-success"
+                type="button"
+                :disabled="!disable"
+                @click="searchUser()"
+                class="btn btn-success"
             >
               Search User
             </button>
           </div>
           <div class="input-group mb-3">
             <input
-              disabled
-              type="text"
-              :placeholder="placeHolder"
-              class="text-center form-control"
+                disabled
+                type="text"
+                :placeholder="placeHolder"
+                class="text-center form-control"
             />
           </div>
         </form>
@@ -45,12 +45,12 @@
           <div class="input-group mb-3">
             <span class="input-group-text">Absolute limit</span>
             <input
-              @keypress="isNumber($event)"
-              :disabled="disable"
-              v-model="abs"
-              required="required"
-              type="text"
-              class="required form-control"
+                @keypress="isNumberOrNegative($event)"
+                :disabled="disable"
+                v-model="abs"
+                required="required"
+                type="text"
+                class="required form-control"
             />
           </div>
           <div class="input-group mb-3">
@@ -58,8 +58,8 @@
             <div class="">
               <select :disabled="disable" v-model="selected">
                 <option
-                  v-for="option in options"
-                  v-bind:key="{ value: option.value, text: option.text }"
+                    v-for="option in options"
+                    v-bind:key="{ value: option.value, text: option.text }"
                 >
                   {{ option.text }}
                 </option>
@@ -69,12 +69,12 @@
           <div class="input-group mb-3">
             <span class="input-group-text">Balance</span>
             <input
-              @keypress="isNumber($event)"
-              :disabled="disable"
-              v-model="balance"
-              required=""
-              type="text"
-              class="form-control"
+                @keypress="isNumber($event)"
+                :disabled="disable"
+                v-model="balance"
+                required=""
+                type="text"
+                class="form-control"
             />
           </div>
           <div class="input-group mb-3">
@@ -83,47 +83,46 @@
               <div>
                 <div class="input-group">
                   <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_0"
-                    v-on:keyup.right="pin_focus('pin_1')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_0')"
-                    ref="pin_0"
-                    type="text"
-                    placeholder="0"
+                      class="form-control"
+                      :disabled="disable"
+                      v-model.number="pin_0"
+                      v-on:keyup.right="pin_focus('pin_1')"
+                      v-on:keypress="is_valid_pin_value($event, 'pin_0')"
+                      ref="pin_0"
+                      type="text"
+                      placeholder="0"
                   />
                   <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_1"
-                    v-on:keyup.left="pin_focus('pin_0')"
-                    v-on:keyup.right="pin_focus('pin_2')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_1')"
-                    ref="pin_1"
-                    type="text"
-                    placeholder="0"
-                  />
-
-                  <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_2"
-                    v-on:keyup.left="pin_focus('pin_1')"
-                    v-on:keyup.right="pin_focus('pin_3')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_2')"
-                    ref="pin_2"
-                    type="text"
-                    placeholder="0"
+                      class="form-control"
+                      :disabled="disable"
+                      v-model.number="pin_1"
+                      v-on:keyup.left="pin_focus('pin_0')"
+                      v-on:keyup.right="pin_focus('pin_2')"
+                      v-on:keypress="is_valid_pin_value($event, 'pin_1')"
+                      ref="pin_1"
+                      type="text"
+                      placeholder="0"
                   />
                   <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_3"
-                    v-on:keyup.left="pin_focus('pin_2')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_3')"
-                    ref="pin_3"
-                    type="text"
-                    placeholder="0"
+                      class="form-control"
+                      :disabled="disable"
+                      v-model.number="pin_2"
+                      v-on:keyup.left="pin_focus('pin_1')"
+                      v-on:keyup.right="pin_focus('pin_3')"
+                      v-on:keypress="is_valid_pin_value($event, 'pin_2')"
+                      ref="pin_2"
+                      type="text"
+                      placeholder="0"
+                  />
+                  <input
+                      class="form-control"
+                      :disabled="disable"
+                      v-model.number="pin_3"
+                      v-on:keyup.left="pin_focus('pin_2')"
+                      v-on:keypress="is_valid_pin_value($event, 'pin_3')"
+                      ref="pin_3"
+                      type="text"
+                      placeholder="0"
                   />
                 </div>
               </div>
@@ -134,9 +133,9 @@
               Create Account
             </button>
             <button
-              type="button"
-              class="btn btn-danger"
-              @click="this.$router.push('/accounts')"
+                type="button"
+                class="btn btn-danger"
+                @click="this.$router.push('/accounts')"
             >
               Cancel
             </button>
@@ -148,9 +147,10 @@
   </section>
 </template>
 
+
 <script>
 import axios from "../../axios-auth";
-import { mapGetters } from "vuex";
+import {mapGetters} from "vuex";
 
 export default {
   name: "AddAccount",
@@ -190,8 +190,8 @@ export default {
       pin_3: null,
       pinfull: null,
       options: [
-        { text: "current", value: "current" },
-        { text: "savings", value: "savings" },
+        {text: "current", value: "current"},
+        {text: "savings", value: "savings"},
       ],
       username: this.$route.query.username || "",  // Initialize username from route query
       placeHolder: "",
@@ -217,15 +217,15 @@ export default {
     is_valid_pin_value: function (e, pin_N) {
       const char = String.fromCharCode(e.keyCode);
       const is_value_selected =
-        this[pin_N] !== null &&
-        this.$refs[pin_N].selectionStart === 0 &&
-        this.$refs[pin_N].selectionEnd === this[pin_N].toString().length;
+          this[pin_N] !== null &&
+          this.$refs[pin_N].selectionStart === 0 &&
+          this.$refs[pin_N].selectionEnd === this[pin_N].toString().length;
       if (
-        (this[pin_N] === null ||
-          this[pin_N].toString().length === 0 ||
-          is_value_selected) &&
-        parseInt(char, 10) >= 0 &&
-        parseInt(char, 10) <= 9
+          (this[pin_N] === null ||
+              this[pin_N].toString().length === 0 ||
+              is_value_selected) &&
+          parseInt(char, 10) >= 0 &&
+          parseInt(char, 10) <= 9
       ) {
         return true;
       }
@@ -246,9 +246,23 @@ export default {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
       if (
-        charCode > 31 &&
-        (charCode < 48 || charCode > 57) &&
-        charCode !== 46
+          charCode > 31 &&
+          (charCode < 48 || charCode > 57) &&
+          charCode !== 46
+      ) {
+        evt.preventDefault();
+      } else {
+        return true;
+      }
+    },
+    isNumberOrNegative: function (evt) {
+      evt = evt ? evt : window.event;
+      var charCode = evt.which ? evt.which : evt.keyCode;
+      if (
+          charCode > 31 &&
+          (charCode < 48 || charCode > 57) &&
+          charCode !== 45 &&
+          charCode !== 46
       ) {
         evt.preventDefault();
       } else {
@@ -258,35 +272,35 @@ export default {
     searchUser() {
       console.log(this.username);
       axios
-        .get("users/getByUsername/" + this.username)
-        .then((res) => {
-          this.placeHolder = res.data.firstname + " " + res.data.lastname;
-          this.ownerId = res.data.id;
-          this.fetchedUser = JSON.stringify(res.data);
-          this.errMsg = "";
-          console.log(this.fetchedUser);
-          this.disable = false;
-        })
-      .catch((error) => {  // Use arrow function here
-        this.errMsg = "User not found";
-        console.log("gaat niet goed");
-        console.log(error);
-      });
+          .get("users/getByUsername/" + this.username)
+          .then((res) => {
+            this.placeHolder = res.data.firstname + " " + res.data.lastname;
+            this.ownerId = res.data.id;
+            this.fetchedUser = JSON.stringify(res.data);
+            this.errMsg = "";
+            console.log(this.fetchedUser);
+            this.disable = false;
+          })
+          .catch((error) => {  // Use arrow function here
+            this.errMsg = "User not found";
+            console.log("gaat niet goed");
+            console.log(error);
+          });
     },
     //adduser method
 
     addAccount() {
       if (
-        this.pin_0 != null &&
-        this.pin_1 != null &&
-        this.pin_2 != null &&
-        this.pin_3 != null
+          this.pin_0 != null &&
+          this.pin_1 != null &&
+          this.pin_2 != null &&
+          this.pin_3 != null
       ) {
         const stringCode =
-          this.pin_0.toString() +
-          this.pin_1.toString() +
-          this.pin_2.toString() +
-          this.pin_3.toString();
+            this.pin_0.toString() +
+            this.pin_1.toString() +
+            this.pin_2.toString() +
+            this.pin_3.toString();
         const data = JSON.stringify({
           accountType: this.selected.valueOf(),
           ownerId: this.ownerId,
@@ -304,15 +318,15 @@ export default {
           },
         };
         axios
-          .post("accounts", data, config)
-          .then((response) => {
-            console.log(response);
-            this.$router.replace("/accounts");
-          })
-          .catch((error) => {
-            console.log(error);
-            this.errMsg = "please fill in all the fields.";
-          });
+            .post("accounts", data, config)
+            .then((response) => {
+              console.log(response);
+              this.$router.replace("/accounts");
+            })
+            .catch((error) => {
+              console.log(error);
+              this.errMsg = "please fill in all the fields.";
+            });
       }
     },
   },
