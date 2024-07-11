@@ -65,12 +65,21 @@ const router = createRouter({
 
 import {Tabs, Tab} from 'vue3-tabs-component';
 import VueAwesomePaginate from "vue-awesome-paginate";
-
+import { h } from 'vue';
 // import the necessary css file
 
 import "vue-awesome-paginate/dist/style.css";
 
-const app = createApp(App).use(VueAwesomePaginate).component('tabs', Tabs).component('tab', Tab);
+const app = createApp({
+    render() {
+      return h(App); // Render App component
+    }
+  });
+
+app.use(VueAwesomePaginate); // Assuming VueAwesomePaginate is a plugin you want to use
+
+app.component('tabs', Tabs); // Register 'tabs' component
+app.component('tab', Tab);   // Register 'tab' component
 
 app.use(router);
 app.use(store);
