@@ -129,7 +129,7 @@ export default {
       }
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`users/username/${this.searchUserQuery}`, {
+        const response = await axios.get(`users/getByUserName/${this.searchUserQuery}`, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",

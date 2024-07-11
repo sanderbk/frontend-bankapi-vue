@@ -176,7 +176,7 @@ export default {
       console.log(this.getUserName);
 
       axios
-        .get("users/username/" + this.getUserName)
+        .get("users/getByUserName/" + this.getUserName)
         .then((res) => {
           this.user = res.data;
 

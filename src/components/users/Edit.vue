@@ -129,7 +129,7 @@ export default {
     searchUser() {
       console.log(this.username);
       axios
-        .get("users/username/" + this.username)
+        .get("users/getByUserName/" + this.username)
         .then((res) => {
           this.firstname = res.data.firstname;
           this.lastname = res.data.lastname;
