@@ -13,6 +13,7 @@
     "axios": "^0.27.2",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
     "core-js": "^3.6.5",
+    "gh-pages": "^6.1.1",
     "vue": "^3.0.0",
     "vue-awesome-paginate": "^1.2.0",
     "vue-axios": "^3.4.1",
