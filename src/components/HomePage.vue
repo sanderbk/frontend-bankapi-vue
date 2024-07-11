@@ -106,6 +106,18 @@
               </div>
             </div>
           </div>
+          <div v-if="!isAdmin" class="col-sm-4">
+            <div class="card mt-4">
+              <!-- Add margin top -->
+              <div class="card-body">
+                <h5 class="card-title">View My Accounts</h5>
+                <p class="card-text">This is quick access to view your accounts</p>
+                <router-link to="/Accounts" class="btn btn-danger"
+                  >View accounts</router-link
+                >
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

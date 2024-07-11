@@ -16,6 +16,7 @@
           Account balance is not available.
         </h1>
       </div>
+
       <div class="input-group mx-0 text-center mb-3">
         <select
           @change="onChange($event)"
@@ -30,49 +31,131 @@
           </option>
         </select>
       </div>
+
       <div
+        class="tabs-container"
         v-if="selectedAccount && selectedAccount.balance !== null"
-        class="input-group mb-3"
       >
-        <span class="input-group-text">Search for user</span>
-        <input :disabled="disable" type="text" v-model="username" class="form-control" />
-        <button
-          type="button"
-          :disabled="disable"
-          @click="searchUser()"
-          class="btn btn-success"
-        >
-          Search User
-        </button>
+        <tabs nav-item-class="nav-item">
+          <tab :is-disabled="isTabDisabled.first" name="Make transaction By User">
+            <div class="user-transaction">
+              <div
+                v-if="selectedAccount && selectedAccount.balance !== null"
+                class="input-group mb-3"
+              >
+                <div class="input-group mb-3 w-70">
+                  <span class="input-group-text">Search on firstname and lastname</span>
+                  <input
+                    @input="searchAccount('second', true)"
+                    type="text"
+                    :disabled="disable"
+                    v-model="firstnameInput"
+                    class="form-control"
+                    placeholder="Firstname..."
+                  />
+                  <input
+                    @input="searchAccount('second', true)"
+                    :disabled="disable"
+                    type="text"
+                    v-model="lastnameInput"
+                    class="form-control"
+                    placeholder="Lastname..."
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-success"
+                    :disabled="disable"
+                    @click="searchAccount('second', true)"
+                  >
+                    Search for user
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="accountsFetched.length != 0" class="">
+                <table class="table align-middle mb-0 bg-white shadow-sm">
+                  <thead class="bg-light">
+                    <tr>
+                      <th>IBan</th>
+                      <th>Balance</th>
+                      <th>AbsLimit</th>
+                      <th>Owner</th>
+                      <th>Owner Name</th>
+                      <th v-if="!selectedToAccount">Action</th>
+                      <th>AccountType [DEMO]</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="account in accountsFetched"
+                      :key="account.id"
+                      :account="account"
+                    >
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="ms-3">
+                            <p class="text-muted mb-0">{{ account.iban }}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>€{{ account.balance }}</td>
+                      <td>€{{ account.absLimit }}</td>
+                      <td>
+                        <span
+                          class="badge text-primary badge-success rounded-pill d-inline"
+                        >
+                          {{ account.username }}
+                        </span>
+                      </td>
+                      <td>{{ account.firstname }} {{ account.lastname }}</td>
+                      <td v-if="!selectedToAccount">
+                        <a
+                          @click="selectIban(account, $event, 'second')"
+                          class="btn btn-secondary"
+                          >Select Account</a
+                        >
+                      </td>
+                      <td>{{ account.accountType }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p v-else>{{ accountsNotFetchedMsg }}</p>
+            </div>
+          </tab>
+          <tab :is-disabled="isTabDisabled.second" name="Make transaction with Iban"
+            ><div class="iban-transaction">
+              <div
+                v-if="selectedAccount && selectedAccount.balance !== null"
+                class="input-group my-3"
+              >
+                <span class="input-group-text">Iban to make a deposit to:</span>
+                <input
+                  :disabled="disable"
+                  type="text"
+                  v-model="ibanSearch"
+                  class="form-control"
+                />
+                <button
+                  type="button"
+                  :disabled="disable"
+                  @click="searchAccount('first', false)"
+                  class="btn btn-success"
+                >
+                  Search Iban
+                </button>
+              </div>
+            </div>
+          </tab>
+        </tabs>
       </div>
-      <div
-        v-if="selectedAccount && selectedAccount.balance !== null"
-        class="input-group mb-3"
-      >
-        <span class="input-group-text w-100 text-center">Iban to make a deposit to</span>
-        <select
-          @change="onChange2($event)"
-          class="w-100 text-center mx-0"
-          :disabled="!disable"
-          v-model="selectedToAccount"
-        >
-          <option :value="null" disabled>Select Account</option>
-          <option
-            v-for="account in accountsFetched"
-            :key="account.iban"
-            :value="account.iban"
-          >
-            Iban: {{ account.iban }} Owner: {{ account.username }} AccountType:
-            {{ account.accountType }}
-          </option>
-        </select>
-      </div>
+
       <form v-on:submit.prevent="login" ref="depoform">
         <div
           v-if="selectedAccount && selectedAccount.balance !== null"
           class="form-hider"
         >
-          <div class="input-group mb-3">
+          <div class="input-group my-3">
             <span class="input-group-text">Amount to transfer: €</span>
             <input
               @keypress="isNumber($event)"
@@ -83,12 +166,19 @@
               class="text-center form-control"
             />
           </div>
+
           <div class="input-group mb-3">
             <button type="button" class="w-100 btn btn-primary" @click="makeTrans()">
               Transfer
             </button>
           </div>
-          <p v-if="errorMsg" class="text-danger">{{ errorMsg }}</p>
+          <p v-if="errorMsg" class="text-danger">
+            {{ errorMsg }}<br />
+            <span class="text-black">
+              Please click <a href="/transaction" class="cursor-pointer">here</a> to
+              reload the page.</span
+            >
+          </p>
         </div>
       </form>
     </div>
@@ -108,17 +198,30 @@ export default {
   },
   data() {
     return {
+      AccountType: {
+        SAVINGS: "SAVINGS",
+        CURRENT: "CURRENT",
+      },
+
       selected: null,
       selectedToAccount: null,
       disable: false,
       accounts: [],
       accountsFetched: [],
+      accountsNotFetchedMsg: "",
       userID: "",
       balInput: "",
       errorMsg: "",
       username: "",
       selectedAccount: null,
       token: "",
+      isTabDisabled: {
+        first: false,
+        second: false,
+        third: false,
+        fourth: false,
+        fifth: false,
+      },
     };
   },
   mounted() {
@@ -126,7 +229,7 @@ export default {
     this.userID = localStorage.getItem("userID");
     axios
       .request({
-        url: "accounts/userid/" + this.userID,
+        url: "accounts/getByUserId/" + this.userID,
         method: "get",
         headers: {
           Accept: "application/json",
@@ -145,46 +248,79 @@ export default {
       .finally(() => (this.loading = false));
   },
   methods: {
-    searchUser() {
-      console.log(this.username);
+    searchAccount(tabKey, complexSearch) {
+      let params = {};
+
+      if (!complexSearch) {
+        params = {
+          iban: this.ibanSearch,
+        };
+      } else {
+        params = {
+          firstname: this.firstnameInput,
+          lastname: this.lastnameInput,
+        };
+      }
+
+      console.log("complex search" + params);
+
+      console.log(this.ibanSearch);
+
       axios
-        .get("users/username/" + this.username)
+        .get("accounts/search", {
+          params: params,
+          ...this.config, // Assuming this.config contains other Axios configurations
+        })
         .then((res) => {
-          this.placeHolder = res.data.firstname + " " + res.data.lastname;
-          this.ownerId = res.data.id;
-          this.fetchedUser = JSON.stringify(res.data);
-          this.errMsg = "";
-          this.findIbanByUsername(res.data.username);
-          this.disable = true;
+          if (!complexSearch) {
+            if (res.data.content[0].iban.length == 18) {
+              this.selectedToAccount = res.data.content[0].iban;
+              this.disableTab(tabKey);
+
+              this.disable = true;
+              this.errorMsg = "";
+            }
+          }
+          if (complexSearch) {
+            console.log(
+              "trying to echo data complex;" + JSON.stringify(res.data.content)
+            );
+
+            this.accountsFetched = res.data.content.filter(
+              (account) => account.accountType === "current"
+            );
+          }
         })
         .catch((error) => {
-          this.errMsg = "User not found";
+          this.errorMsg = "No account found with provided iban";
+
           console.log(error);
         });
     },
-    findIbanByUsername(username) {
-      if (!username) {
-        console.error("Username is undefined or null");
-        return;
+    selectIban(account, event, tabKey) {
+      this.disableTab(tabKey);
+
+      const parentTr = event.target.closest("tr");
+
+      // Find all elements with the 'is-inactive' class and replace it with 'is-disabled'
+      const inactiveElements = document.querySelectorAll(".is-inactive");
+
+      inactiveElements.forEach((element) => {
+        element.classList.remove("is-inactive");
+        element.classList.add("is-disabled");
+      });
+
+      if (parentTr) {
+        parentTr.classList.add("selected-tr");
       }
-      axios
-        .request({
-          url: `accounts/username/${username}`,
-          method: "get",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json; charset=UTF-8",
-            Authorization: `Bearer ${this.token}`,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.accountsFetched = response.data;
-        })
-        .catch((error) => {
-          console.error("Error fetching IBAN by username:", error);
-          this.errorMsg = "Failed to fetch accounts by username.";
-        });
+      this.selectedToAccount = account.iban;
+
+      this.disable = true;
+    },
+    disableTab(tabKey) {
+      if (Object.prototype.hasOwnProperty.call(this.isTabDisabled, tabKey)) {
+        this.isTabDisabled[tabKey] = true;
+      }
     },
     makeTrans() {
       const balFloat = parseFloat(this.balInput);
@@ -242,7 +378,7 @@ export default {
     onChange(event) {
       axios
         .request({
-          url: "accounts/iban/" + event.target.value,
+          url: "accounts/" + event.target.value,
           method: "get",
           headers: {
             Accept: "application/json",
@@ -263,7 +399,7 @@ export default {
     onChange2(event) {
       axios
         .request({
-          url: "accounts/iban/" + event.target.value,
+          url: "accounts/" + event.target.value,
           method: "get",
           headers: {
             Accept: "application/json",
@@ -292,3 +428,5 @@ export default {
   },
 };
 </script>
+
+<style scoped></style>

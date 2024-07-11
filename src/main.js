@@ -14,6 +14,7 @@ import HomePage from './components/HomePage.vue';
 //Accounts
 import Index from './components/accounts/Index.vue';
 import AddAccount from './components/accounts/AddAccount.vue';
+import EditAccount from './components/accounts/EditAccount.vue';
 
 //Transactions
 import Deposit from './components/transactions/Deposit.vue';
@@ -22,7 +23,8 @@ import MakeTrans from './components/transactions/MakeTrans.vue';
 import Transactions from "@/components/transactions/Transactions.vue";
 import AllTransactions from "@/components/transactions/AllTransactions.vue";
 
-
+//Stylesheer
+import '../src/assets/css/main.css'
 
 const routes = [
 
@@ -37,7 +39,12 @@ const routes = [
 
     //account routes
     { path: '/accounts', component: Index },
-    { path: '/addaccount', component: AddAccount },
+    { path: '/addaccount', component: AddAccount },    
+    {
+        path: '/editaccount/:iban',
+        name: 'EditAccount',
+        component: EditAccount
+    },
 
 
     //transaction routes
@@ -56,7 +63,15 @@ const router = createRouter({
     routes
 })
 
-const app = createApp(App);
+import {Tabs, Tab} from 'vue3-tabs-component';
+import VueAwesomePaginate from "vue-awesome-paginate";
+
+// import the necessary css file
+
+import "vue-awesome-paginate/dist/style.css";
+
+const app = createApp(App).use(VueAwesomePaginate).component('tabs', Tabs).component('tab', Tab);
+
 app.use(router);
 app.use(store);
 app.mount('#app');

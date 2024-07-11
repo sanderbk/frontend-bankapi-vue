@@ -7,7 +7,7 @@
             <div class="text-muted login-wrap p-2 p-md-2">
               <div class="d-flex">
                 <div class="w-100">
-                  <h3 class="mb-4">Edit an user limit</h3>
+                  <h3 class="mb-4">Edit a user limit</h3>
                 </div>
               </div>
               <form @submit="checkForm" v-on:submit.prevent="updateUser">
@@ -176,14 +176,27 @@ export default {
           "Content-Type": "application/json",
         },
       };
+
+      const dayParsed = parseFloat(this.dayLimit);
+      const transParsed = parseFloat(this.transLimit);
+
+      console.log(dayParsed);
+      console.log(transParsed);
+
+      if (dayParsed == null || transParsed == null) {
+        this.errorms = "no good values provided.";
+        return;
+      }
+
+      let putData = JSON.stringify({
+        dayLimit: dayParsed,
+        transLimit: transParsed,
+      });
+
+      console.log("data: " + putData);
+
       axios
-        .put(
-          `/users/${this.username}?dayLimit=${parseFloat(
-            this.dayLimit
-          )}&transLimit=${parseFloat(this.transLimit)}`,
-          {},
-          config
-        )
+        .put(`/users/${this.username}`, putData, config)
         .then((response) => {
           this.loading = false;
           this.$router.replace("/home");

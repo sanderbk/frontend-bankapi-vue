@@ -155,7 +155,7 @@ export default {
     fetchAccounts() {
       axios
         .request({
-          url: "accounts/userid/" + this.userID,
+          url: "accounts/getByUserId/" + this.userID,
           method: "get",
           headers: {
             Accept: "application/json",
@@ -273,7 +273,7 @@ export default {
     onChange(event) {
       axios
         .request({
-          url: "accounts/iban/" + event.target.value,
+          url: "accounts/" + event.target.value,
           method: "get",
           headers: {
             Accept: "application/json",

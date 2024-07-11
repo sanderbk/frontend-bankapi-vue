@@ -60,7 +60,7 @@
                 "
                 class="py-2 mx-2 btn btn-secondary"
               >
-                Edit Account
+                Edit User
               </button>
             </td>
           </tr>
