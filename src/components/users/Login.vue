@@ -1,4 +1,4 @@
-<template >
+<template>
   <section v-if="!isLoggedIn" class="ftco-section">
     <div class="container">
       <div class="row justify-content-center">
@@ -13,9 +13,7 @@
               </div>
               <form v-on:submit.prevent="login">
                 <div class="form-group mt-3">
-                  <label class="form-control-placeholder" for="username"
-                    >Username</label
-                  >
+                  <label class="form-control-placeholder" for="username">Username</label>
                   <input
                     type="text"
                     class="form-control"
@@ -24,9 +22,7 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label class="form-control-placeholder" for="password"
-                    >Password</label
-                  >
+                  <label class="form-control-placeholder" for="password">Password</label>
                   <input
                     v-model="password"
                     id="password-field"
@@ -46,26 +42,18 @@
                     :disabled="loading"
                   >
                     <span v-if="!loading">Sign in 🔓</span>
-                    <span v-else><i class="fa fa-spinner fa-spin"></i> Signing in...</span>
+                    <span v-else
+                      ><i class="fa fa-spinner fa-spin"></i> Signing in...</span
+                    >
                   </button>
 
-                  <span :v-if="errorms" class="w-100 text-danger">{{
-                    errorms
-                  }}</span>
+                  <span :v-if="errorms" class="w-100 text-danger">{{ errorms }}</span>
                 </div>
               </form>
               <a
                 @click="register()"
                 style=""
-                class="
-                  mt-2
-                  btn
-                  w-100
-                  text-center
-                  submit
-                  vue-butt
-                  btn-primary btn-lg
-                "
+                class="mt-2 btn w-100 text-center submit vue-butt btn-primary btn-lg"
               >
                 <span>Register</span>
               </a>
@@ -85,7 +73,7 @@ export default {
       username: "",
       password: "",
       errorms: "",
-      loading: false,  // Add loading state
+      loading: false, // Add loading state
     };
   },
   computed: {
@@ -97,19 +85,23 @@ export default {
       this.$router.replace("/register");
     },
     login() {
-      this.loading = true;  // Set loading to true
+      this.loading = true;
       this.$store
         .dispatch("login", {
           username: this.username,
           password: this.password,
         })
         .then(() => {
-          this.loading = false;  // Set loading to false
+          this.loading = false;
           this.$router.replace("/home");
         })
         .catch((error) => {
-          this.loading = false;  // Set loading to false
-          this.errorms = error.response.data.reason;
+          this.loading = false;
+          if (error.response && error.response.data && error.response.data.reason) {
+            this.errorms = error.response.data.reason;
+          } else {
+            this.errorms = "An unexpected error occurred. Please try again.";
+          }
         });
     },
   },
@@ -127,10 +119,6 @@ export default {
 
 .ftco-section {
   height: 94vh;
-  background: radial-gradient(
-    circle,
-    rgb(238, 238, 238) 0%,
-    rgb(233, 233, 233)
-  );
+  background: radial-gradient(circle, rgb(238, 238, 238) 0%, rgb(233, 233, 233));
 }
 </style>

@@ -12,7 +12,8 @@
       <table class="table align-middle mb-0 bg-white shadow-sm">
         <thead class="bg-light">
           <tr>
-            <th>id</th>
+            <th>Role</th>
+            <th>Status</th>
             <th>Username</th>
             <th>Fullname</th>
             <th>Email</th>
@@ -88,7 +89,7 @@ export default {
     let token = localStorage.getItem("token");
     axios
       .request({
-        url: "users/getAllWithoutAccount",
+        url: "users/without-account",
         method: "get",
         headers: {
           Accept: "application/json",
@@ -97,6 +98,7 @@ export default {
         },
       })
       .then((response) => {
+        console.log(this.users);
         this.users = response.data;
       })
       .catch((error) => {

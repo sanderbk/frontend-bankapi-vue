@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import axios from "../axios-auth";
+
 const store = createStore({
   state() {
     return {
@@ -17,13 +18,7 @@ const store = createStore({
       return state.username;
     },
     isAdmin(state) {
-      if (state.userrole) {
-        if (state.userrole.toString().includes("ROLE_EMPLOYEE")) {
-          return true;
-        } else {
-          return false;
-        }
-      }
+      return state.userrole?.toString().includes("ROLE_EMPLOYEE") || false;
     },
     getUserRole(state) {
       return state.userrole;
@@ -54,7 +49,6 @@ const store = createStore({
 
             commit("authenticateUser", result.data);
             localStorage.setItem("token", result.data.token);
-
             localStorage.setItem("userrole", result.data.userrole);
             localStorage.setItem("userID", result.data.userID);
             localStorage.setItem("username", result.data.username);
@@ -83,4 +77,5 @@ const store = createStore({
     },
   },
 });
+
 export default store;

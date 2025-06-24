@@ -45,6 +45,25 @@
                     required="required"
                   />
                 </div>
+
+                <!-- User Status Dropdown - Only visible for employees/admins -->
+                <div class="form-group" v-if="isAdmin || isEmployee">
+                  <label class="form-control-placeholder" for="userStatus"
+                    >Account Status</label
+                  >
+                  <select
+                    id="userStatus"
+                    class="form-control"
+                    v-model="userStatus"
+                    required="required"
+                  >
+                    <option value="" disabled>Select account status</option>
+                    <option value="pending">Pending Approval</option>
+                    <option value="approved">Approved</option>
+                    <option value="closed">Closed/Rejected</option>
+                  </select>
+                </div>
+
                 <div class="form-group">
                   <label class="form-control-placeholder" for="daylimit">Daylimit</label>
                   <input
@@ -111,11 +130,12 @@ export default {
       phone: null,
       registeredOn: null,
       active: true,
+      userStatus: null,
       dayLimit: 0.0,
       transLimit: 0.0,
       errorms: "",
       successms: "",
-      loading: false, // Add loading state
+      loading: false,
     };
   },
   mounted() {
@@ -124,12 +144,19 @@ export default {
   computed: {
     ...mapGetters(["isLoggedIn"]),
     ...mapGetters(["isAdmin"]),
+    // Add this computed property if you have an isEmployee getter
+    // If not, you can create one in your Vuex store or check user roles differently
+    isEmployee() {
+      // Replace this with your actual employee check logic
+      // For example, you might check if user has EMPLOYEE role
+      return this.$store.getters.userRoles?.includes("EMPLOYEE") || this.isAdmin;
+    },
   },
   methods: {
     searchUser() {
       console.log(this.username);
       axios
-        .get("users/getByUserName/" + this.username)
+        .get("users/" + this.username)
         .then((res) => {
           this.firstname = res.data.firstname;
           this.lastname = res.data.lastname;
@@ -139,19 +166,47 @@ export default {
           this.phone = res.data.phone;
           this.dayLimit = res.data.dayLimit;
           this.transLimit = res.data.transLimit;
+          this.userStatus = res.data.userStatus;
 
           this.fetchedUser = JSON.stringify(res.data);
           this.errMsg = "";
           console.log(this.fetchedUser);
+          console.log("User Status:", this.userStatus);
           this.disable = false;
         })
         .catch((error) => {
-          // Use arrow function here
           this.errMsg = "User not found";
           console.log("gaat niet goed");
           console.log(error);
         });
     },
+
+    getStatusText(status) {
+      switch (status) {
+        case "PENDING":
+          return "Pending Approval";
+        case "APPROVED":
+          return "Approved";
+        case "CLOSED":
+          return "Closed/Rejected";
+        default:
+          return "Unknown";
+      }
+    },
+
+    getStatusClass(status) {
+      switch (status) {
+        case "PENDING":
+          return "text-warning";
+        case "APPROVED":
+          return "text-success";
+        case "CLOSED":
+          return "text-danger";
+        default:
+          return "text-muted";
+      }
+    },
+
     isNumber: function (evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
@@ -168,8 +223,9 @@ export default {
         return true;
       }
     },
+
     updateUser() {
-      this.loading = true; // Set loading to true
+      this.loading = true;
       let config = {
         headers: {
           Accept: "application/json",
@@ -180,30 +236,42 @@ export default {
       const dayParsed = parseFloat(this.dayLimit);
       const transParsed = parseFloat(this.transLimit);
 
-      console.log(dayParsed);
-      console.log(transParsed);
+      console.log("Day limit:", dayParsed);
+      console.log("Trans limit:", transParsed);
+      console.log("User Status:", this.userStatus);
 
-      if (dayParsed == null || transParsed == null) {
-        this.errorms = "no good values provided.";
+      if (isNaN(dayParsed) || isNaN(transParsed)) {
+        this.errorms = "Please provide valid numeric values for limits.";
+        this.loading = false;
         return;
       }
 
-      let putData = JSON.stringify({
+      // Build the update data object
+      let updateData = {
         dayLimit: dayParsed,
         transLimit: transParsed,
-      });
+      };
 
-      console.log("data: " + putData);
+      // Add userStatus to update data if user is admin/employee and status is selected
+      if ((this.isAdmin || this.isEmployee) && this.userStatus) {
+        updateData.userStatus = this.userStatus;
+      }
+
+      let putData = JSON.stringify(updateData);
+      console.log("Update data:", putData);
 
       axios
         .put(`/users/${this.username}`, putData, config)
         .then((response) => {
           this.loading = false;
-          this.$router.replace("/home");
+          this.successms = "User updated successfully!";
+          setTimeout(() => {
+            this.$router.replace("/home");
+          }, 1500);
           console.log(response);
         })
         .catch((error) => {
-          this.errorms = error.response.data.reason;
+          this.errorms = error.response?.data?.reason || "Failed to update user";
           this.loading = false;
           console.log(error);
         });
@@ -227,5 +295,22 @@ body {
 .ftco-section {
   height: 100%;
   background: radial-gradient(circle, rgb(238, 238, 238) 0%, rgb(233, 233, 233));
+}
+
+.text-warning {
+  color: #ffc107 !important;
+}
+
+.text-success {
+  color: #28a745 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.form-text {
+  margin-top: 0.25rem;
+  font-size: 0.875em;
 }
 </style>

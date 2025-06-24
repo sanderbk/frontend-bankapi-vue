@@ -176,7 +176,7 @@ export default {
       console.log(this.getUserName);
 
       axios
-        .get("users/getByUserName/" + this.getUserName)
+        .get("users/" + this.getUserName)
         .then((res) => {
           this.user = res.data;
 
@@ -217,7 +217,7 @@ export default {
       };
 
       axios
-        .get("accounts/search", {
+        .get("accounts", {
           params: params,
           headers: headers,
         })

@@ -229,7 +229,7 @@ export default {
     this.userID = localStorage.getItem("userID");
     axios
       .request({
-        url: "accounts/getByUserId/" + this.userID,
+        url: "users/" + this.userID + "/accounts",
         method: "get",
         headers: {
           Accept: "application/json",
@@ -267,7 +267,7 @@ export default {
       console.log(this.ibanSearch);
 
       axios
-        .get("accounts/search", {
+        .get("accounts", {
           params: params,
           ...this.config, // Assuming this.config contains other Axios configurations
         })

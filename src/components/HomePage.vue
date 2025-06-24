@@ -35,7 +35,9 @@
               <div class="card-body">
                 <h5 class="card-title">Manage users without account</h5>
                 <p class="card-text">This is quick access to manage the users</p>
-                <router-link to="/users" class="btn btn-primary">User view</router-link>
+                <router-link to="/usersall?filter=noAccounts" class="btn btn-primary"
+                  >User view</router-link
+                >
               </div>
             </div>
           </div>
@@ -54,7 +56,7 @@
         </div>
       </div>
       <!-- Customer Menu -->
-      <div class="admin-menu">
+      <div v-if="hasAccount" class="admin-menu">
         <h2 class="text-center text-muted">Customer menu</h2>
         <div class="row">
           <!-- Deposit -->
@@ -120,6 +122,11 @@
           </div>
         </div>
       </div>
+      <div v-else class="no-admin-menu">
+        <h1>
+          You don't have an account yet wait for an Employee to set it up for you...
+        </h1>
+      </div>
     </div>
     <!-- Not Logged In -->
     <div v-if="!isLoggedIn" class="text-center">
@@ -136,14 +143,30 @@
 
 <script>
 import { mapGetters } from "vuex";
+import axios from "../axios-auth";
 
 export default {
   name: "HelloWorld",
+  data() {
+    return {
+      hasAccount: false,
+    };
+  },
   computed: {
-    ...mapGetters(["isLoggedIn"]),
-    ...mapGetters(["getUserName"]),
-    ...mapGetters(["getUserRole"]),
-    ...mapGetters(["isAdmin"]),
+    ...mapGetters(["isLoggedIn", "getUserName", "getUserRole", "isAdmin", "getuserID"]),
+  },
+  created() {
+    if (this.isLoggedIn && this.getuserID) {
+      axios
+        .get(`users/${this.getuserID}/accounts`)
+        .then((response) => {
+          this.hasAccount = response.data.length > 0;
+        })
+        .catch((error) => {
+          console.error("Failed to check for accounts:", error);
+          this.hasAccount = false;
+        });
+    }
   },
 };
 </script>

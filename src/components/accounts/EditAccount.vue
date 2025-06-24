@@ -277,7 +277,7 @@ export default {
 
       console.log(this.username);
       axios
-        .get("accounts/search", {
+        .get("accounts", {
           params: {
             iban: this.$route.params.iban,
           },
@@ -339,10 +339,10 @@ export default {
           balance: parseFloat(this.balance),
           absLimit: parseFloat(this.absLimit),
           pinCode: parseInt(stringCode),
-          active: this.active,
+          active: this.activeStatus,
         });
 
-        console.log(data2);
+        console.log("XD" + data2);
 
         let token = localStorage.getItem("token");
         let config = {

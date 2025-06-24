@@ -155,7 +155,7 @@ export default {
     fetchAccounts() {
       axios
         .request({
-          url: "accounts/getByUserId/" + this.userID,
+          url: "users/" + this.userID + "/accounts",
           method: "get",
           headers: {
             Accept: "application/json",

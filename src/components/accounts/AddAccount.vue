@@ -264,7 +264,7 @@ export default {
     searchUser() {
       console.log(this.username);
       axios
-        .get("users/username/" + this.username)
+        .get("users/" + this.username)
         .then((res) => {
           this.placeHolder = res.data.firstname + " " + res.data.lastname;
           this.ownerId = res.data.id;
@@ -318,7 +318,7 @@ export default {
           })
           .catch((error) => {
             console.log(error);
-            this.errMsg = "please fill in all the fields.";
+            this.errMsg = error;
           });
       }
     },

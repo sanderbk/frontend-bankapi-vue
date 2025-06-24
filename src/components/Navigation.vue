@@ -43,7 +43,7 @@
                 >
               </li>
               <li>
-                <router-link to="/users" class="dropdown-item"
+                <router-link to="/usersall?filter=noAccounts" class="dropdown-item"
                   >Users without account</router-link
                 >
               </li>
